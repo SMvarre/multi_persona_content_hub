@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Persona Content Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/styles.css?v=mono1" />
+</head>
+<body class="theme-default">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="app-shell" id="app" data-persona="">
+    <!-- Global header — clay bar -->
+    <header class="global-header clay-surface" role="banner">
+      <div class="header-brand">
+        <div class="brand-clay" aria-hidden="true">
+          <span class="brand-icon">✦</span>
+        </div>
+        <div>
+          <h1 class="brand-title">Content Hub</h1>
+          <p class="brand-tagline">Multi-persona RAG</p>
+        </div>
+      </div>
+
+      <!-- Visual persona switcher (pill + gradient ring) -->
+      <div class="persona-switcher clay-inset" role="group" aria-labelledby="globalPersonaLabel">
+        <div class="persona-switcher__visual" id="personaVisual" aria-hidden="true">
+          <span class="persona-orb persona-orb--auto"></span>
+        </div>
+        <div class="persona-switcher__control">
+          <span class="persona-switcher__label" id="globalPersonaLabel">Active persona</span>
+          <div class="persona-switcher__pill">
+            <select id="globalPersona" class="persona-switcher__select" aria-labelledby="globalPersonaLabel">
+              <option value="">✨ Auto-detect</option>
+            </select>
+            <span class="persona-switcher__chevron" aria-hidden="true">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="header-nav" aria-label="Main navigation">
+        <button type="button" class="nav-pill active" data-view="dashboard" aria-current="page">Dashboard</button>
+        <button type="button" class="nav-pill" data-view="documents">Documents</button>
+        <button type="button" class="nav-pill" data-view="rag">RAG</button>
+        <button type="button" class="nav-pill" data-view="agent">Agent</button>
+        <button type="button" class="nav-pill" data-view="personas">Personas</button>
+      </nav>
+
+      <div class="header-meta">
+        <span class="micro-badge micro-badge--accent" id="versionBadge">v—</span>
+        <span class="micro-badge micro-badge--accent" id="docCountBadge">0 chunks</span>
+        <div class="status-clay" id="connectionStatus" role="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-text">Checking…</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Persona accent banner (updates with selection) -->
+    <div class="persona-banner clay-surface" id="personaBanner" role="status" aria-live="polite">
+      <span class="persona-banner__orb" aria-hidden="true"></span>
+      <p class="persona-banner__text"><strong>Mode:</strong> <span id="personaBannerLabel">Auto-detect intent</span></p>
+      <span class="micro-badge micro-badge--accent" id="personaBannerBadge">All personas</span>
+    </div>
+
+    <div class="app-body">
+      <main class="main-feed" id="main-content">
+        <header class="page-intro">
+          <p class="page-eyebrow">Content intelligence workspace</p>
+          <h2 id="viewTitle">Dashboard</h2>
+          <p id="viewSubtitle">System overview and quick actions</p>
+        </header>
+
+        <!-- Dashboard -->
+        <section class="view bento-view active" id="view-dashboard" aria-labelledby="viewTitle">
+          <div class="bento-grid bento-grid--dashboard">
+            <article class="clay-card bento-span-8 bento-row-2 bento-hero">
+              <span class="micro-badge micro-badge--accent">Welcome</span>
+              <h3 class="card-title">Your multi-persona hub</h3>
+              <p class="card-desc">Upload docs, query with RAG, and run persona-styled agents.</p>
+              <div class="visual-well">
+                <div class="clay-orb clay-orb--lg" aria-hidden="true"></div>
+                <div class="clay-orb clay-orb--md clay-orb--offset" aria-hidden="true"></div>
+              </div>
+              <div class="card-actions">
+                <button type="button" class="btn btn-primary" data-goto="documents">Upload docs</button>
+                <button type="button" class="btn btn-secondary" data-goto="rag">Ask RAG</button>
+                <button type="button" class="btn btn-ghost" data-goto="agent">Run agent</button>
+              </div>
+            </article>
+
+            <article class="clay-card bento-span-4 stat-card">
+              <span class="micro-badge micro-badge--accent">Live</span>
+              <h3 class="card-title-sm">API Status</h3>
+              <p class="stat-value" id="healthStatus">—</p>
+              <p class="stat-hint">Backend health</p>
+            </article>
+
+            <article class="clay-card bento-span-4 stat-card">
+              <span class="micro-badge micro-badge--accent">Index</span>
+              <h3 class="card-title-sm">Vector store</h3>
+              <p class="stat-value" id="healthDocs">—</p>
+              <p class="stat-hint">Document chunks</p>
+              <button type="button" class="btn btn-ghost btn-sm" id="clearIndexBtn" style="margin-top:0.75rem">Clear index</button>
+            </article>
+
+            <article class="clay-card bento-span-4 stat-card">
+              <span class="micro-badge micro-badge--accent">Pipeline</span>
+              <h3 class="card-title-sm">Workflows</h3>
+              <p class="stat-value stat-value--sm">3 phases</p>
+              <p class="stat-hint">RAG · Persona agent</p>
+            </article>
+
+            <article class="clay-card bento-span-6">
+              <h3 class="card-title-sm">Quick start</h3>
+              <ol class="steps-list">
+                <li>Upload PDF or TXT under <strong>Documents</strong>.</li>
+                <li>Query in <strong>RAG</strong> for grounded answers.</li>
+                <li>Use <strong>Agent</strong> for persona-styled answers and tools.</li>
+              </ol>
+            </article>
+
+            <article class="clay-card bento-span-6">
+              <span class="micro-badge micro-badge--accent">Config</span>
+              <h3 class="card-title-sm">API connection</h3>
+              <label class="field-label" for="apiBase">Base URL</label>
+              <input id="apiBase" type="url" class="input-clay" value="http://127.0.0.1:8001" placeholder="http://127.0.0.1:8001" />
+              <p class="stat-hint">Port <strong>8001</strong> · hard refresh if styles look old</p>
+            </article>
+          </div>
+        </section>
+
+        <!-- Documents -->
+        <section class="view bento-view" id="view-documents" aria-labelledby="viewTitle">
+          <div class="bento-grid">
+            <article class="clay-card bento-span-12">
+              <span class="micro-badge micro-badge--accent">Ingest</span>
+              <h3 class="card-title">Upload documents</h3>
+              <p class="card-desc">PDF &amp; TXT → chunked → embedded in ChromaDB.</p>
+              <div class="dropzone clay-inset" id="dropzone" role="button" tabindex="0" aria-label="Upload PDF or TXT file">
+                <input type="file" id="fileInput" accept=".pdf,.txt" hidden />
+                <div class="dropzone-visual" aria-hidden="true">📄</div>
+                <p class="dropzone-title">Drop files or click to browse</p>
+                <p class="dropzone-hint">Up to ~20 MB per file</p>
+              </div>
+              <div class="upload-progress hidden" id="uploadProgress">
+                <div class="progress-clay"><span id="progressFill"></span></div>
+                <p id="uploadStatus">Uploading…</p>
+              </div>
+              <div class="ingest-result clay-inset hidden" id="ingestResult"></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- RAG -->
+        <section class="view bento-view" id="view-rag">
+          <div class="bento-grid bento-grid--chat">
+            <article class="clay-card bento-span-8 bento-tall chat-panel">
+              <div class="chat-panel__head">
+                <span class="micro-badge micro-badge--accent">Phase 1</span>
+                <h3 class="card-title-sm">Grounded Q&amp;A</h3>
+              </div>
+              <div class="messages clay-inset" id="ragMessages" role="log" aria-live="polite"></div>
+              <form class="composer" id="ragForm">
+                <textarea id="ragQuestion" class="input-clay input-clay--area" rows="2" placeholder="Ask grounded in your documents…" required aria-label="Question"></textarea>
+                <div class="composer-actions">
+                  <label class="inline-field">
+                    <span class="field-label">top_k</span>
+                    <input type="number" id="ragTopK" class="input-clay input-clay--sm" min="1" max="20" placeholder="4" title="Chunks to retrieve (#1 = best)" />
+                  </label>
+                  <button type="submit" class="btn btn-primary" id="ragSubmit">Ask ✨</button>
+                </div>
+              </form>
+            </article>
+            <aside class="clay-card bento-span-4 context-panel" id="ragContext" aria-label="Retrieved context"></aside>
+          </div>
+        </section>
+
+        <!-- Agent -->
+        <section class="view bento-view" id="view-agent">
+          <div class="bento-grid bento-grid--chat">
+            <article class="clay-card bento-span-8 bento-tall chat-panel">
+              <div class="chat-panel__head">
+                <span class="micro-badge micro-badge--accent">Phase 2</span>
+                <h3 class="card-title-sm">Persona agent</h3>
+              </div>
+              <p class="toolbar-hint">Persona from header switcher · or Auto-detect.</p>
+              <select id="agentPersona" class="visually-hidden" aria-hidden="true" tabindex="-1"><option value="">Auto</option></select>
+              <div class="messages clay-inset" id="agentMessages" role="log" aria-live="polite"></div>
+              <form class="composer" id="agentForm">
+                <textarea id="agentQuestion" class="input-clay input-clay--area" rows="3" placeholder="Persona: Educator | Task: Teaching -> explain how indexing works&#10;Or pick a persona above and ask normally." required aria-label="Agent request"></textarea>
+                <button type="submit" class="btn btn-primary">Run agent 🚀</button>
+              </form>
+            </article>
+            <aside class="clay-card bento-span-4 context-panel" id="agentMeta" aria-label="Agent routing"></aside>
+          </div>
+        </section>
+
+        <!-- Personas -->
+        <section class="view bento-view" id="view-personas">
+          <div class="bento-grid bento-grid--personas" id="personasGrid" role="list" aria-label="Persona gallery"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toasts" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="/api.js"></script>
+  <script src="/app.js?v=mono2"></script>
+</body>
+</html>

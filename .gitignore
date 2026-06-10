@@ -1,0 +1,25 @@
+# Secrets
+.env
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Runtime data (generated / large / private)
+data/chroma/
+data/uploads/
+data/sessions/
+data/evaluations/
+
+# IDE & debug
+.cursor/
+debug-*.log
+*.log
+
+# OS
+Thumbs.db
+.DS_Store

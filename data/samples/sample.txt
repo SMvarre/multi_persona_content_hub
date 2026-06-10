@@ -1,0 +1,6 @@
+Modular RAG Phase 1 Sample Document
+
+This sample explains retrieval-augmented generation (RAG).
+RAG combines document retrieval with language model generation.
+Chunks are embedded with all-MiniLM-L6-v2 and stored in ChromaDB.
+The API answers questions only from retrieved context and cites chunk IDs.
